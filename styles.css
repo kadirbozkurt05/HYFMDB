@@ -1,0 +1,86 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffdb58; /* Yellow background color */
+    margin: 0;
+    padding: 0;
+}
+
+/* Navbar Styles */
+.navbar {
+    background-color: #f9a825; /* Yellow Navbar Background */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.navbar-right ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.navbar-right a {
+    text-decoration: none;
+    color: #333; /* Dark text color */
+}
+
+/* Search Bar Styles */
+.search-bar {
+    background-color: #f9a825; /* Yellow Search Bar Background */
+    padding: 10px;
+}
+
+.search-bar p {
+    color: #333; /* Dark text color */
+}
+
+.search-bar input {
+    padding: 5px;
+    border: 2px solid;
+}
+
+.search-bar button {
+    border: 2px solid;
+    padding: 5px;
+}
+
+/* Movie Section Styles */
+.movie-section {
+    /* Add styles to display movies here */
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-top: 10px;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+
+}
+
+/* Additional Styling as Needed */
+p{
+    display: inline-block;
+    max-width: 500px;
+}
+
+.movie-container{
+    display: inline-block;
+    margin: 10px;
+    border: 5px solid #333;
+    text-align: center;
+}
+
+.single-movie-container{
+    text-align: left;
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.result-container{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three columns per row */
+    grid-gap: 20px;
+}
