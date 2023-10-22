@@ -35,5 +35,3 @@ The OMDb API is a RESTful web service that provides movie information, including
 
 - **Usage Limit**: Free users can make up to 1000 requests in a day.
 - **Documentation**: For more information on using the OMDB API, please refer to the [OMDB API Documentation](https://www.omdbapi.com).
-
-
