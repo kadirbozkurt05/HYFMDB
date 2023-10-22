@@ -4,6 +4,9 @@ body {
   margin: 0;
   padding: 0;
 }
+* {
+  box-sizing: border-box;
+}
 
 /*NAVBAR STYLE*/
 .navbar {
@@ -16,7 +19,7 @@ body {
   align-items: center;
 }
 
-.navbar-right ul{
+.navbar-right ul {
   list-style: none;
   margin: 0;
   margin-right: 5px;
@@ -43,22 +46,21 @@ body {
   text-decoration: none;
   color: #333;
 }
-.navbar-right{
-    margin-left: auto;
-    display: flex;
+.navbar-right {
+  margin-left: auto;
+  display: flex;
 }
 .search-bar {
-    padding: 10px;
-    display: flex;
-    flex: 12;
-  }
+  padding: 10px;
+  display: flex;
+  flex: 12;
+}
 
 .navbar-left {
   display: flex;
   cursor: pointer;
   flex: 1;
 }
-
 
 nav img {
   padding: 5px;
@@ -68,15 +70,13 @@ nav img {
 
 /*SEARCH BAR STYLE*/
 
-
-
 .search-bar input {
   padding: 10px;
   border: 1px solid;
   border-radius: 8px;
   flex: 3 1 0;
-  background-color: rgba(200, 200, 200,0.3);
-  outline:none;
+  background-color: rgba(200, 200, 200, 0.3);
+  outline: none;
 }
 
 .search-bar button {
@@ -112,10 +112,9 @@ nav img {
   align-items: center;
 }
 
-.movie-details{
-    display: flex;
+.movie-details {
+  display: flex;
 }
-
 
 .movie-container {
   display: block;
@@ -123,17 +122,16 @@ nav img {
   text-align: center;
   border-radius: 5px;
   background: #373737;
-  
 }
-.movie-container-texts{
-    background: #a8a8a8;
-    line-height: 1.3em;
-    height: 7em;       /* height is 2x line-height, so two lines will display */
-    overflow: hidden;  /* prevents extra lines from being visible */
+.movie-container-texts {
+  background: #a8a8a8;
+  line-height: 1.3em;
+  height: 7em; 
+  overflow: hidden; 
 }
 
-.movie-container h5{
-display: inline;
+.movie-container h5 {
+  display: inline;
 }
 
 .single-movie-container {
@@ -143,23 +141,47 @@ display: inline;
   flex: 6;
   margin-left: 200px;
 }
-.poster-container{
-    display: flex;
-    flex: 3;
-    flex-direction: column;
+.poster-container {
+  display: flex;
+  flex: 3;
+  flex-direction: column;
 }
-.single-movie-container h3{
-    background: #f9a825;
-    padding: 5px;
-    color: #000000;
-    border-radius: 4px;
+.single-movie-container h3 {
+  background: #f9a825;
+  padding: 5px;
+  color: #000000;
+  border-radius: 4px;
 }
-.single-movie-container p{
-    background: #f9a825;
-    display: block;
-    padding: 5px;
-    color: #000000;
-    border-radius: 4px;
+.single-movie-container p {
+  background: #f9a825;
+  display: block;
+  padding: 5px;
+  color: #000000;
+  border-radius: 4px;
+}
+.add-favorite {
+  background-color: #4caf50;
+  color: black;
+  height: 40px;
+  border: 2px solid #4caf50;
+  transition: 0.6s;
+  font-size: 16px;
+}
+.add-favorite:hover {
+  background-color: #ffffff; 
+}
+
+.remove-favorite {
+  margin-top: 4px;
+  background-color: #ff0000;
+  color: black;
+  height: 40px;
+  border: 2px solid #ff0000;
+  transition: 0.6s;
+  font-size: 16px;
+}
+.remove-favorite:hover {
+  background-color: #ffffff; 
 }
 
 .movie-container:hover {
@@ -179,7 +201,7 @@ display: inline;
 }
 
 .movie-section img {
-    padding: 30px;
+  padding: 30px;
 }
 
 .movie-section p {
@@ -196,14 +218,22 @@ display: inline;
   color: #878686;
   font-size: 25px;
 }
-table{
-    display: block;
+table {
+  display: block;
 }
 
 .last-searches-container table tr {
   text-decoration: underline;
   display: flex;
   flex: 120;
+}
+
+.error-container {
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  margin: 10px 0;
 }
 
 @media (max-width: 767px) {
@@ -226,15 +256,14 @@ table{
     flex-direction: column;
   }
 
-  .search-bar input {   
+  .search-bar input {
     display: block;
     width: unset;
   }
 
   .search-bar button {
     display: block;
-    height: fit-content;
-    margin-top: 10px; /* Add some space between the input and button */
+    margin-top: 10px; 
   }
 
   .movie-container {
@@ -258,7 +287,7 @@ table{
   ul {
     display: flex;
     justify-content: center;
-  } 
+  }
   .last-searches-container {
     display: flex;
     justify-content: center;
