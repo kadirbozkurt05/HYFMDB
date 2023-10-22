@@ -2,7 +2,7 @@ import apiKey from "./keys.json" assert { type: "json" };
 import moviesData from "./movieList.json" assert { type: "json" };
 
 const apikey = apiKey.apikey;
-const searchSection = document.getElementsByClassName("movie-section")[0];
+const searchSection = document.querySelector(".movie-section");
 const menuSearchButton = document.querySelector(".navbar a");
 const menuLastSearchesButton = document.querySelector(
   ".navbar li:nth-child(2) > a"
@@ -10,16 +10,24 @@ const menuLastSearchesButton = document.querySelector(
 const menuFavoritesButton = document.querySelector(
   ".navbar li:nth-child(3) > a"
 );
-const movieSectionTitleElement = document.querySelector('.movie-section-title h1')
-
+const movieSectionTitleElement = document.querySelector(
+  ".movie-section-title h1"
+);
 const searchInput = document.querySelector(".search-bar input");
 const searchButton = document.querySelector(".search-bar button");
+const lastSearchedMovies = localStorage.getItem("lastSearchedMovies")
+  ? JSON.parse(localStorage.getItem("lastSearchedMovies"))
+  : { movies: [] };
+let favoriteMovies = localStorage.getItem("favoriteMovies")
+  ? JSON.parse(localStorage.getItem("favoriteMovies"))
+  : { movies: [] };
+
+showRandomMovies();
 
 async function showRandomMovies() {
-movieSectionTitleElement.textContent='RECOMMENDED MOVIES';
-  const movies =  moviesData.movies;
+  movieSectionTitleElement.textContent = "RECOMMENDED MOVIES";
+  const movies = moviesData.movies;
   const randomMovies = [];
-
 
   for (let i = 0; i < 3; i++) {
     const randomNumber = Math.floor(Math.random() * 77);
@@ -27,68 +35,60 @@ movieSectionTitleElement.textContent='RECOMMENDED MOVIES';
   }
 
   resultsSectionAllMovies(randomMovies);
-};
+}
 
-showRandomMovies();
-const menuActions = () => {
+function menuActions() {
   //Search Button Clears the Section
   menuSearchButton.addEventListener("click", () => {
-    searchSection.innerHTML = "";
     showRandomMovies();
   });
 
   menuLastSearchesButton.addEventListener("click", () => {
-    //Burayı sonra yap
+    lastSearches();
   });
 
   menuFavoritesButton.addEventListener("click", () => {
-    searchSection.innerHTML = "";
-    //Burayı sonra yap
+    movieSectionTitleElement.innerText = 'Favorite Movies';
+    resultsSectionAllMovies(favoriteMovies.movies);
   });
-};
+}
 
-const searchFetch = async (query) => {
+async function searchFetch(query) {
   const url = `http://www.omdbapi.com/?apikey=${apikey}&s=${query}`;
   const movies = await fetch(url);
   const data = movies.json();
 
   return data;
-};
+}
 
 async function getMovieById(id) {
   const url = `http://www.omdbapi.com/?apikey=${apikey}&i=${id}`;
   const movie = await fetch(url);
   const data = movie.json();
   return data;
-};
+}
 
 async function getMovieByTitle(title) {
   const url = `http://www.omdbapi.com/?apikey=${apikey}&t=${title}`;
   const movie = await fetch(url);
   const data = movie.json();
   return data;
-};
+}
 
-searchButton.addEventListener("click", async () => {
-  movieSectionTitleElement.textContent='SEARCH RESULTS';
+searchButton.addEventListener("click", () => {
+  const query = searchInput.value;
+  searchFunction(query);
+});
 
-  let listOfMovies = [];
-  try {
+searchInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" || event.keyCode === 13) {
     const query = searchInput.value;
-    const results = await searchFetch(query);
-    listOfMovies = results.Search;
-    resultsSectionAllMovies(listOfMovies);
-  } catch (error) {
-    searchSection.innerHTML = "";
-    const errorDivElement = document.createElement("div");
-    const errorElement = document.createElement("h1");
-    errorElement.textContent = error.message;
-    errorDivElement.appendChild(errorElement);
-    searchSection.appendChild(errorDivElement);
+    console.log(query);
+    searchFunction(query);
   }
 });
 
-const resultsSectionAllMovies = (listOfMovies) => {
+function resultsSectionAllMovies(listOfMovies) {
   searchSection.innerHTML = "";
 
   const resultContainer = document.createElement("div");
@@ -98,9 +98,22 @@ const resultsSectionAllMovies = (listOfMovies) => {
   listOfMovies.forEach((movie) => {
     const movieContainer = document.createElement("div");
     movieContainer.classList.add("movie-container");
-    const titleOfTheMovie = document.createElement("h1");
-    titleOfTheMovie.innerText = `${movie.Title} (${movie.Year})`;
-    movieContainer.appendChild(titleOfTheMovie);
+
+    const movieContainerTextsElement = document.createElement('div');
+    movieContainerTextsElement.classList.add('movie-container-texts');
+
+    const titleOfTheMovie = document.createElement("h3");
+    titleOfTheMovie.innerText = movie.Title;
+    const yearElement = document.createElement('h5');
+    yearElement.innerText = `Year : ${movie.Year} - Runtime : ${movie.Runtime}`;
+
+
+
+    movieContainerTextsElement.appendChild(titleOfTheMovie);
+    movieContainerTextsElement.appendChild(yearElement);
+
+
+    movieContainer.appendChild(movieContainerTextsElement);
 
     const posterOfTheMovie = document.createElement("img");
     posterOfTheMovie.alt = movie.Title;
@@ -109,13 +122,14 @@ const resultsSectionAllMovies = (listOfMovies) => {
     resultContainer.appendChild(movieContainer);
 
     movieContainer.addEventListener("click", async () => {
+
       const data = await getMovieById(movie.imdbID);
       movieSectionTitleElement.textContent = data.Title;
       searchSection.innerHTML = "";
+      const movieDetailDiv = document.createElement('div');
+      movieDetailDiv.classList.add('movie-details');
       const singleMovieContainer = document.createElement("div");
       singleMovieContainer.classList.add("single-movie-container");
-      const typeElement = document.createElement("h3");
-      typeElement.innerText = `Type : ${data.Type}`;
       const yearElement = document.createElement("h3");
       yearElement.innerText = `YEAR : ${data.Year}`;
       const ratingElement = document.createElement("h3");
@@ -140,11 +154,34 @@ const resultsSectionAllMovies = (listOfMovies) => {
       DirectorElement.innerText = `Director/S : ${data.Director}`;
       const plotElement = document.createElement("p");
       plotElement.innerText = `PLOT : ${data.Plot}`;
+
+      const posterElementDiv = document.createElement("div");
+      posterElementDiv.classList.add('poster-container')
       const posterElement = document.createElement("img");
       posterElement.src = data.Poster;
       posterElement.alt = data.Title;
 
-      singleMovieContainer.appendChild(typeElement);
+      posterElementDiv.appendChild(posterElement);
+      const addFavoriteElement = document.createElement("button");
+      addFavoriteElement.type = "button";
+      addFavoriteElement.innerText = "Add To Favorites";
+      posterElementDiv.appendChild(addFavoriteElement);
+
+      addFavoriteElement.addEventListener("click", () => {
+        addToFavorites(movie);
+      });
+
+      if (favoriteMovies.movies.includes(movie)) {
+        const removeFavoriteElement = document.createElement("button");
+        removeFavoriteElement.type = "button";
+        removeFavoriteElement.innerText = "Remove From Favorites";
+        posterElementDiv.appendChild(removeFavoriteElement);
+        removeFavoriteElement.addEventListener("click", () => {
+          removeFromFavorites(movie);
+          resultsSectionAllMovies(favoriteMovies.movies);
+        });
+      }
+
       singleMovieContainer.appendChild(yearElement);
       singleMovieContainer.appendChild(ratingElement);
       singleMovieContainer.appendChild(genreElement);
@@ -158,58 +195,77 @@ const resultsSectionAllMovies = (listOfMovies) => {
       singleMovieContainer.appendChild(DirectorElement);
       singleMovieContainer.appendChild(plotElement);
 
-      searchSection.appendChild(singleMovieContainer);
-      searchSection.appendChild(posterElement);
+      movieDetailDiv.appendChild(posterElementDiv);
+      movieDetailDiv.appendChild(singleMovieContainer);
+      
+
+      searchSection.appendChild(movieDetailDiv);
+      ;
     });
   });
-
-
-
-
-
-
-  /*
-    {
-    "Title": "The Lord of the Rings: The Fellowship of the Ring",
-    "Year": "2001",
-    "Rated": "PG-13",
-    "Released": "19 Dec 2001",
-    "Runtime": "178 min",
-    "Genre": "Action, Adventure, Drama",
-    "Director": "Peter Jackson",
-    "Writer": "J.R.R. Tolkien, Fran Walsh, Philippa Boyens",
-    "Actors": "Elijah Wood, Ian McKellen, Orlando Bloom",
-    "Plot": "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.",
-    "Language": "English, Sindarin",
-    "Country": "New Zealand, United States",
-    "Awards": "Won 4 Oscars. 125 wins & 127 nominations total",
-    "Poster": "https://m.media-amazon.com/images/M/MV5BN2EyZjM3NzUtNWUzMi00MTgxLWI0NTctMzY4M2VlOTdjZWRiXkEyXkFqcGdeQXVyNDUzOTQ5MjY@._V1_SX300.jpg",
-    "Ratings": [
-        {
-            "Source": "Internet Movie Database",
-            "Value": "8.8/10"
-        },
-        {
-            "Source": "Rotten Tomatoes",
-            "Value": "91%"
-        },
-        {
-            "Source": "Metacritic",
-            "Value": "92/100"
-        }
-    ],
-    "Metascore": "92",
-    "imdbRating": "8.8",
-    "imdbVotes": "1,948,559",
-    "imdbID": "tt0120737",
-    "Type": "movie",
-    "DVD": "28 Jun 2011",
-    "BoxOffice": "$316,115,420",
-    "Production": "N/A",
-    "Website": "N/A",
-    "Response": "True"
 }
-*/
-};
+
+function lastSearches() {
+  movieSectionTitleElement.textContent = "Last Searches";
+  const lastSearchedMoviesDivElement = document.createElement("div");
+  lastSearchedMoviesDivElement.classList.add("last-searches-container");
+  const lastSearchedMoviesTableElement = document.createElement("table");
+
+  lastSearchedMovies.movies.forEach((movie) => {
+    const tr = document.createElement("tr");
+    tr.textContent = movie;
+    tr.addEventListener("click", () => {
+      const query = tr.innerText;
+      searchFunction(query);
+    });
+    lastSearchedMoviesTableElement.appendChild(tr);
+  });
+
+  lastSearchedMoviesDivElement.appendChild(lastSearchedMoviesTableElement);
+  searchSection.innerHTML = "";
+  searchSection.appendChild(lastSearchedMoviesDivElement);
+}
+
+async function searchFunction(query) {
+  movieSectionTitleElement.textContent = "SEARCH RESULTS";
+
+  let listOfMovies = [];
+  try {
+    const results = await searchFetch(query);
+    listOfMovies = results.Search;
+    if (!lastSearchedMovies.movies.includes(query)) {
+      lastSearchedMovies.movies.unshift(query);
+      localStorage.setItem(
+        "lastSearchedMovies",
+        JSON.stringify(lastSearchedMovies)
+      );
+    }
+    resultsSectionAllMovies(listOfMovies);
+  } catch (error) {
+    searchSection.innerHTML = "";
+    const errorDivElement = document.createElement("div");
+    const errorElement = document.createElement("h1");
+    errorElement.textContent = error.message;
+    errorDivElement.appendChild(errorElement);
+    searchSection.appendChild(errorDivElement);
+  }
+}
+
+function addToFavorites(movie) {
+  if (!favoriteMovies.movies.includes(movie)) {
+    favoriteMovies.movies.unshift(movie);
+    localStorage.setItem("favoriteMovies", JSON.stringify(favoriteMovies));
+  } else {
+    console.log("zaten var");
+  }
+}
+function removeFromFavorites(movie) {
+  if (favoriteMovies.movies.includes(movie)) {
+    favoriteMovies.movies = favoriteMovies.movies.filter(
+      (each) => each !== movie
+    );
+    localStorage.setItem("favoriteMovies", JSON.stringify(favoriteMovies));
+  }
+}
 
 menuActions();
