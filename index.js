@@ -38,7 +38,6 @@ async function showRandomMovies() {
 }
 
 function menuActions() {
-  //Search Button Clears the Section
   menuSearchButton.addEventListener("click", () => {
     showRandomMovies();
   });
@@ -48,7 +47,7 @@ function menuActions() {
   });
 
   menuFavoritesButton.addEventListener("click", () => {
-    movieSectionTitleElement.innerText = 'Favorite Movies';
+    movieSectionTitleElement.innerText = "Favorite Movies";
     resultsSectionAllMovies(favoriteMovies.movies);
   });
 }
@@ -99,19 +98,15 @@ function resultsSectionAllMovies(listOfMovies) {
     const movieContainer = document.createElement("div");
     movieContainer.classList.add("movie-container");
 
-    const movieContainerTextsElement = document.createElement('div');
-    movieContainerTextsElement.classList.add('movie-container-texts');
-
+    const movieContainerTextsElement = document.createElement("div");
+    movieContainerTextsElement.classList.add("movie-container-texts");
     const titleOfTheMovie = document.createElement("h3");
     titleOfTheMovie.innerText = movie.Title;
-    const yearElement = document.createElement('h5');
-    yearElement.innerText = `Year : ${movie.Year} - Runtime : ${movie.Runtime}`;
-
-
+    const yearElement = document.createElement("h5");
+    yearElement.innerText = `Year : ${movie.Year}`;
 
     movieContainerTextsElement.appendChild(titleOfTheMovie);
     movieContainerTextsElement.appendChild(yearElement);
-
 
     movieContainer.appendChild(movieContainerTextsElement);
 
@@ -122,12 +117,11 @@ function resultsSectionAllMovies(listOfMovies) {
     resultContainer.appendChild(movieContainer);
 
     movieContainer.addEventListener("click", async () => {
-
       const data = await getMovieById(movie.imdbID);
       movieSectionTitleElement.textContent = data.Title;
       searchSection.innerHTML = "";
-      const movieDetailDiv = document.createElement('div');
-      movieDetailDiv.classList.add('movie-details');
+      const movieDetailDiv = document.createElement("div");
+      movieDetailDiv.classList.add("movie-details");
       const singleMovieContainer = document.createElement("div");
       singleMovieContainer.classList.add("single-movie-container");
       const yearElement = document.createElement("h3");
@@ -156,13 +150,14 @@ function resultsSectionAllMovies(listOfMovies) {
       plotElement.innerText = `PLOT : ${data.Plot}`;
 
       const posterElementDiv = document.createElement("div");
-      posterElementDiv.classList.add('poster-container')
+      posterElementDiv.classList.add("poster-container");
       const posterElement = document.createElement("img");
       posterElement.src = data.Poster;
       posterElement.alt = data.Title;
 
       posterElementDiv.appendChild(posterElement);
       const addFavoriteElement = document.createElement("button");
+      addFavoriteElement.classList.add("add-favorite");
       addFavoriteElement.type = "button";
       addFavoriteElement.innerText = "Add To Favorites";
       posterElementDiv.appendChild(addFavoriteElement);
@@ -173,6 +168,7 @@ function resultsSectionAllMovies(listOfMovies) {
 
       if (favoriteMovies.movies.includes(movie)) {
         const removeFavoriteElement = document.createElement("button");
+        removeFavoriteElement.classList.add("remove-favorite");
         removeFavoriteElement.type = "button";
         removeFavoriteElement.innerText = "Remove From Favorites";
         posterElementDiv.appendChild(removeFavoriteElement);
@@ -197,10 +193,8 @@ function resultsSectionAllMovies(listOfMovies) {
 
       movieDetailDiv.appendChild(posterElementDiv);
       movieDetailDiv.appendChild(singleMovieContainer);
-      
 
       searchSection.appendChild(movieDetailDiv);
-      ;
     });
   });
 }
@@ -243,11 +237,22 @@ async function searchFunction(query) {
     resultsSectionAllMovies(listOfMovies);
   } catch (error) {
     searchSection.innerHTML = "";
-    const errorDivElement = document.createElement("div");
-    const errorElement = document.createElement("h1");
-    errorElement.textContent = error.message;
-    errorDivElement.appendChild(errorElement);
-    searchSection.appendChild(errorDivElement);
+    movieSectionTitleElement.textContent = `Error : ${error.message}`;
+
+    const errorContainer = document.createElement("div");
+
+    errorContainer.classList.add("error-container");
+    const errorMessage = document.createElement("h1");
+    errorMessage.textContent =
+      "An error occured:Please check your internet connection!";
+    const errorImage = document.createElement("img");
+
+    errorImage.src = "assets/error.gif";
+    errorImage.alt = "error";
+
+    searchSection.appendChild(errorContainer);
+    errorContainer.appendChild(errorMessage);
+    errorContainer.appendChild(errorImage);
   }
 }
 
@@ -255,6 +260,7 @@ function addToFavorites(movie) {
   if (!favoriteMovies.movies.includes(movie)) {
     favoriteMovies.movies.unshift(movie);
     localStorage.setItem("favoriteMovies", JSON.stringify(favoriteMovies));
+    resultsSectionAllMovies(favoriteMovies.movies);
   } else {
     console.log("zaten var");
   }
