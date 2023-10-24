@@ -88,7 +88,7 @@ function menuActions() {
  This async method search the movies on API with the keyword given and returns the related data
  */
 async function searchFetch(query) {
-  const url = `http://www.omdbapi.com/?apikey=${apikey}&s=${query}`;
+  const url = `https://www.omdbapi.com/?apikey=${apikey}&s=${query}`;
   const movies = await fetch(url);
   const data = movies.json();
 
@@ -104,7 +104,7 @@ async function searchFetch(query) {
  */
 
 async function getMovieById(id) {
-  const url = `http://www.omdbapi.com/?apikey=${apikey}&i=${id}`;
+  const url = `https://www.omdbapi.com/?plot=full&apikey=${apikey}&i=${id}`;
   const movie = await fetch(url);
   const data = movie.json();
   return data;
@@ -118,7 +118,7 @@ async function getMovieById(id) {
  * This async function fetch the details of the movie from API with the movie title
  */
 async function getMovieByTitle(title) {
-  const url = `http://www.omdbapi.com/?apikey=${apikey}&t=${title}`;
+  const url = `https://www.omdbapi.com/?plot=full&apikey=${apikey}&t=${title}`;
   const movie = await fetch(url);
   const data = movie.json();
   return data;
