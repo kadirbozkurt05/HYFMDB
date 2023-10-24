@@ -1,6 +1,10 @@
 import apiKey from "./keys.json" assert { type: "json" };
 import moviesData from "./movieList.json" assert { type: "json" };
 
+/**
+ * Global variables
+ */
+const logoElement = document.querySelector(".navbar-left");
 const apikey = apiKey.apikey;
 const searchSection = document.querySelector(".movie-section");
 const menuSearchButton = document.querySelector(".navbar a");
@@ -24,20 +28,32 @@ let favoriteMovies = localStorage.getItem("favoriteMovies")
 
 showRandomMovies();
 
+/**
+ * This function will change the "Search Section" as "Recommended Movies"
+ */
 async function showRandomMovies() {
   movieSectionTitleElement.textContent = "RECOMMENDED MOVIES";
-  const movies = moviesData.movies;
+
+  const movies = moviesData.movies; //From the json which we have
   const randomMovies = [];
 
+  //This loop will select 3 random movies whenever the method is run
   for (let i = 0; i < 3; i++) {
     const randomNumber = Math.floor(Math.random() * 77);
     randomMovies.push(await getMovieByTitle(movies[randomNumber]));
   }
 
+  //resultsSectionAllMovies() method always re-create the "searchSection". In here, the movies shown will be the random movies
   resultsSectionAllMovies(randomMovies);
 }
 
+/**
+ * This method is for the listener of the general buttons of the page
+ */
 function menuActions() {
+  logoElement.addEventListener("click", () => {
+    location.reload();
+  });
   menuSearchButton.addEventListener("click", () => {
     showRandomMovies();
   });
@@ -50,8 +66,27 @@ function menuActions() {
     movieSectionTitleElement.innerText = "Favorite Movies";
     resultsSectionAllMovies(favoriteMovies.movies);
   });
+  searchButton.addEventListener("click", () => {
+    const query = searchInput.value;
+    searchFunction(query);
+  });
+
+  searchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.keyCode === 13) {
+      const query = searchInput.value;
+      console.log(query);
+      searchFunction(query);
+    }
+  });
 }
 
+/**
+ * 
+ * @param {string} query 
+ * @returns json;
+ * 
+ This async method search the movies on API with the keyword given and returns the related data
+ */
 async function searchFetch(query) {
   const url = `http://www.omdbapi.com/?apikey=${apikey}&s=${query}`;
   const movies = await fetch(url);
@@ -60,6 +95,14 @@ async function searchFetch(query) {
   return data;
 }
 
+/**
+ *
+ * @param {string} id
+ * @returns json
+ *
+ * This async function fetch the details of the movie from API with the IMDB id.
+ */
+
 async function getMovieById(id) {
   const url = `http://www.omdbapi.com/?apikey=${apikey}&i=${id}`;
   const movie = await fetch(url);
@@ -67,26 +110,25 @@ async function getMovieById(id) {
   return data;
 }
 
+/**
+ *
+ * @param {string} id
+ * @returns json
+ *
+ * This async function fetch the details of the movie from API with the movie title
+ */
 async function getMovieByTitle(title) {
   const url = `http://www.omdbapi.com/?apikey=${apikey}&t=${title}`;
   const movie = await fetch(url);
   const data = movie.json();
   return data;
 }
-
-searchButton.addEventListener("click", () => {
-  const query = searchInput.value;
-  searchFunction(query);
-});
-
-searchInput.addEventListener("keydown", (event) => {
-  if (event.key === "Enter" || event.keyCode === 13) {
-    const query = searchInput.value;
-    console.log(query);
-    searchFunction(query);
-  }
-});
-
+/**
+ *
+ * @param {array} listOfMovies
+ *
+ * This method list all the movies in the array given. When fetch movies with async methods, use this method to show them on the search section
+ */
 function resultsSectionAllMovies(listOfMovies) {
   searchSection.innerHTML = "";
 
@@ -94,6 +136,7 @@ function resultsSectionAllMovies(listOfMovies) {
   resultContainer.classList.add("result-container");
   searchSection.appendChild(resultContainer);
 
+  //In this loop, we use DOM to create a movie container which we can show movie poster and name
   listOfMovies.forEach((movie) => {
     const movieContainer = document.createElement("div");
     movieContainer.classList.add("movie-container");
@@ -116,6 +159,7 @@ function resultsSectionAllMovies(listOfMovies) {
     movieContainer.appendChild(posterOfTheMovie);
     resultContainer.appendChild(movieContainer);
 
+    //With this listener, we change the search section to movie details. It fetchs the details of the movie by using its IMDB ID.
     movieContainer.addEventListener("click", async () => {
       const data = await getMovieById(movie.imdbID);
       movieSectionTitleElement.textContent = data.Title;
@@ -162,16 +206,19 @@ function resultsSectionAllMovies(listOfMovies) {
       addFavoriteElement.innerText = "Add To Favorites";
       posterElementDiv.appendChild(addFavoriteElement);
 
+      //With this button, user can add the movie to the favorites
       addFavoriteElement.addEventListener("click", () => {
         addToFavorites(movie);
       });
 
+      //With this if statement, we add a remove favorite button if it is in the favorites
       if (favoriteMovies.movies.includes(movie)) {
         const removeFavoriteElement = document.createElement("button");
         removeFavoriteElement.classList.add("remove-favorite");
         removeFavoriteElement.type = "button";
         removeFavoriteElement.innerText = "Remove From Favorites";
         posterElementDiv.appendChild(removeFavoriteElement);
+        //With this button, user can remove the movie from the favorites
         removeFavoriteElement.addEventListener("click", () => {
           removeFromFavorites(movie);
           resultsSectionAllMovies(favoriteMovies.movies);
@@ -199,6 +246,10 @@ function resultsSectionAllMovies(listOfMovies) {
   });
 }
 
+/**
+ * This function shows the last searches of the user
+ */
+
 function lastSearches() {
   movieSectionTitleElement.textContent = "Last Searches";
   const lastSearchedMoviesDivElement = document.createElement("div");
@@ -220,6 +271,13 @@ function lastSearches() {
   searchSection.appendChild(lastSearchedMoviesDivElement);
 }
 
+/**
+ *
+ * @param {string} query
+ *
+ * With this async function, list the searched movies which comes from API wtih the searchFetch(query) method. If there is an error, we catch it
+ * and show user an error message
+ */
 async function searchFunction(query) {
   movieSectionTitleElement.textContent = "SEARCH RESULTS";
 
@@ -237,7 +295,7 @@ async function searchFunction(query) {
     resultsSectionAllMovies(listOfMovies);
   } catch (error) {
     searchSection.innerHTML = "";
-    movieSectionTitleElement.textContent = `Error : ${error.message}`;
+    movieSectionTitleElement.textContent = `Oops! Something went wrong!`;
 
     const errorContainer = document.createElement("div");
 
@@ -256,6 +314,11 @@ async function searchFunction(query) {
   }
 }
 
+/**
+ *
+ * @param {json} movie
+ * This function add the movie to favorites. We don't use an authentication on our web site. So, we use local storage to store the data
+ */
 function addToFavorites(movie) {
   if (!favoriteMovies.movies.includes(movie)) {
     favoriteMovies.movies.unshift(movie);
@@ -265,6 +328,12 @@ function addToFavorites(movie) {
     console.log("zaten var");
   }
 }
+
+/**
+ *
+ * @param {json} movie
+ * This function remove the movie from favorites.
+ */
 function removeFromFavorites(movie) {
   if (favoriteMovies.movies.includes(movie)) {
     favoriteMovies.movies = favoriteMovies.movies.filter(

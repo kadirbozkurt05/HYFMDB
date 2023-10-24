@@ -19,6 +19,7 @@ body {
   align-items: center;
 }
 
+/*MENU ITEMS*/
 .navbar-right ul {
   list-style: none;
   margin: 0;
@@ -50,25 +51,12 @@ body {
   margin-left: auto;
   display: flex;
 }
+/*SEARCH BAR*/
 .search-bar {
   padding: 10px;
   display: flex;
   flex: 12;
 }
-
-.navbar-left {
-  display: flex;
-  cursor: pointer;
-  flex: 1;
-}
-
-nav img {
-  padding: 5px;
-  margin: 5px;
-  border-radius: 15px;
-}
-
-/*SEARCH BAR STYLE*/
 
 .search-bar input {
   padding: 10px;
@@ -101,6 +89,20 @@ nav img {
   height: fit-content;
 }
 
+/*LOGO*/
+
+.navbar-left {
+  display: flex;
+  cursor: pointer;
+  flex: 1;
+}
+
+nav img {
+  padding: 5px;
+  margin: 5px;
+  border-radius: 15px;
+}
+
 /*MAIN SECTION STYLE*/
 
 .movie-section {
@@ -126,8 +128,8 @@ nav img {
 .movie-container-texts {
   background: #a8a8a8;
   line-height: 1.3em;
-  height: 7em; 
-  overflow: hidden; 
+  height: 7em;
+  overflow: hidden;
 }
 
 .movie-container h5 {
@@ -168,7 +170,7 @@ nav img {
   font-size: 16px;
 }
 .add-favorite:hover {
-  background-color: #ffffff; 
+  background-color: #ffffff;
 }
 
 .remove-favorite {
@@ -181,7 +183,7 @@ nav img {
   font-size: 16px;
 }
 .remove-favorite:hover {
-  background-color: #ffffff; 
+  background-color: #ffffff;
 }
 
 .movie-container:hover {
@@ -210,6 +212,8 @@ nav img {
 
 .last-searches-container {
   color: #ffffff;
+  display: block;
+  text-align: center;
   font-size: 22px;
   cursor: pointer;
 }
@@ -235,6 +239,8 @@ table {
   font-weight: bold;
   margin: 10px 0;
 }
+
+/*RESPONSIVE STYLE*/
 
 @media (max-width: 767px) {
   .navbar {
@@ -263,7 +269,8 @@ table {
 
   .search-bar button {
     display: block;
-    margin-top: 10px; 
+    margin-top: 10px;
+    padding: 10px;
   }
 
   .movie-container {
@@ -289,8 +296,26 @@ table {
     justify-content: center;
   }
   .last-searches-container {
+    display: block;
+    width: 100%;
+  }
+  .last-searches-container table tr {
+    text-decoration: underline;
+    display: block;
+  }
+  .movie-details {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+  }
+
+  .single-movie-container {
+    margin-left: 0px;
+  }
+  .error-container {
+    display: flex;
+    flex-direction: column;
+  }
+  .error-container img {
+    width: 100%;
   }
 }
